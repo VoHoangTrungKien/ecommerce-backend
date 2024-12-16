@@ -51,10 +51,10 @@ const loginUser = (userLogin) => {
       const comparePassword = bcrypt.compare(password, checkUser.password);
 
       if (!comparePassword) {
-        return {
+        resolve({
           status: "ERR",
           message: "The password or user is incorrect",
-        };
+        });
       }
       const access_token = await genneralAccessToken({
         id: checkUser.id,
@@ -66,12 +66,12 @@ const loginUser = (userLogin) => {
         isAdmin: checkUser.isAdmin,
       });
 
-      return {
+      resolve({
         status: "OK",
         message: "SUCCESS",
         access_token,
         refresh_token,
-      };
+      });
     } catch (e) {
       reject(e);
     }
