@@ -69,7 +69,6 @@ const loginUser = async (req, res) => {
       });
     }
     const response = await UserService.loginUser(req.body);
-    // Kiểm tra nếu không tìm thấy tài khoản hoặc sai mật khẩu
     if (!response || response.status === "ERR") {
       return res.status(401).json({
         status: "ERR",
@@ -83,6 +82,13 @@ const loginUser = async (req, res) => {
       sameSite: "strict",
       path: "/",
     });
+    res.cookie("refresh_token", refresh_token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      path: "/",
+    });
+
     return res.status(200).json({ ...newReponse, refresh_token });
   } catch (e) {
     return res.status(404).json({
