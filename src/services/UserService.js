@@ -48,7 +48,7 @@ const loginUser = (userLogin) => {
           message: "The user is not defined",
         });
       }
-      const comparePassword = bcrypt.compare(password, checkUser.password);
+      const comparePassword = bcrypt.compareSync(password, checkUser.password);
 
       if (!comparePassword) {
         resolve({
