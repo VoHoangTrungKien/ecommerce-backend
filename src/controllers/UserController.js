@@ -6,35 +6,27 @@ const createUser = async (req, res) => {
     const { name, email, password, confirmPassword, phone } = req.body;
     const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
     const isCheckEmail = reg.test(email);
-
-    // Kiểm tra nếu thiếu các trường bắt buộc
     if (!email || !password || !confirmPassword) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: "ERR",
         message: "The input is required",
       });
-    }
-    // Kiểm tra định dạng email
-    else if (!isCheckEmail) {
-      return res.status(400).json({
+    } else if (!isCheckEmail) {
+      return res.status(200).json({
         status: "ERR",
-        message: "The input is not a valid email",
+        message: "The input is email",
+      });
+    } else if (password !== confirmPassword) {
+      return res.status(200).json({
+        status: "ERR",
+        message: "The password is equal confirmPassword",
       });
     }
-    // Kiểm tra nếu mật khẩu không khớp với mật khẩu xác nhận
-    else if (password !== confirmPassword) {
-      return res.status(400).json({
-        status: "ERR",
-        message: "The password does not match the confirmPassword",
-      });
-    }
-
-    // Tạo người dùng mới
     const response = await UserService.createUser(req.body);
     return res.status(200).json(response);
   } catch (e) {
-    return res.status(500).json({
-      message: e.message || "Internal server error",
+    return res.status(404).json({
+      message: e,
     });
   }
 };
