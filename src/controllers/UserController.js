@@ -7,21 +7,26 @@ const createUser = async (req, res) => {
     const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
     const isCheckEmail = reg.test(email);
     if (!email || !password || !confirmPassword) {
-      return res.status(200).json({
+      return res.status(400).json({
         status: "ERR",
-        message: "The input is required",
-      });
-    } else if (!isCheckEmail) {
-      return res.status(200).json({
-        status: "ERR",
-        message: "The input is email",
-      });
-    } else if (password !== confirmPassword) {
-      return res.status(200).json({
-        status: "ERR",
-        message: "The password is equal confirmPassword",
+        message: "All fields are required",
       });
     }
+
+    if (!isCheckEmail) {
+      return res.status(400).json({
+        status: "ERR",
+        message: "Invalid email format",
+      });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(422).json({
+        status: "ERR",
+        message: "Password and confirmPassword do not match",
+      });
+    }
+
     const response = await UserService.createUser(req.body);
     return res.status(200).json(response);
   } catch (e) {
