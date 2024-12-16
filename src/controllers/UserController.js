@@ -69,6 +69,13 @@ const loginUser = async (req, res) => {
       });
     }
     const response = await UserService.loginUser(req.body);
+    // Kiểm tra nếu không tìm thấy tài khoản hoặc sai mật khẩu
+    if (!response || response.status === "ERR") {
+      return res.status(401).json({
+        status: "ERR",
+        message: response?.message || "Invalid email or password.",
+      });
+    }
     const { refresh_token, ...newReponse } = response;
     res.cookie("refresh_token", refresh_token, {
       httpOnly: true,
