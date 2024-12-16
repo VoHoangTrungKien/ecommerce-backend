@@ -4,34 +4,50 @@ const JwtService = require("../services/JwtService");
 const createUser = async (req, res) => {
   try {
     const { name, email, password, confirmPassword, phone } = req.body;
-    const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-    const isCheckEmail = reg.test(email);
-    if (!email || !password || !confirmPassword) {
+
+    // Kiểm tra dữ liệu đầu vào
+    if (!name || !email || !password || !confirmPassword || !phone) {
       return res.status(400).json({
         status: "ERR",
-        message: "All fields are required",
+        message: "All fields are required.",
       });
     }
 
-    if (!isCheckEmail) {
+    // Kiểm tra định dạng email
+    const emailRegex = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
+    if (!emailRegex.test(email)) {
       return res.status(400).json({
         status: "ERR",
-        message: "Invalid email format",
+        message: "Invalid email format.",
       });
     }
 
+    // Kiểm tra mật khẩu
     if (password !== confirmPassword) {
-      return res.status(422).json({
+      return res.status(400).json({
         status: "ERR",
-        message: "Password and confirmPassword do not match",
+        message: "Password and confirmPassword do not match.",
       });
     }
 
-    const response = await UserService.createUser(req.body);
-    return res.status(200).json(response);
-  } catch (e) {
-    return res.status(404).json({
-      message: e,
+    // Gọi service để tạo user
+    const response = await UserService.createUser({
+      name,
+      email,
+      password,
+      phone,
+    });
+
+    return res.status(201).json({
+      status: "OK",
+      message: "User created successfully.",
+      data: response,
+    });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return res.status(500).json({
+      status: "ERR",
+      message: "Internal server error.",
     });
   }
 };
