@@ -4,15 +4,6 @@ const JwtService = require("../services/JwtService");
 const createUser = async (req, res) => {
   try {
     const { name, email, password, confirmPassword, phone } = req.body;
-
-    // Kiểm tra dữ liệu đầu vào
-    if (!name || !email || !password || !confirmPassword || !phone) {
-      return res.status(400).json({
-        status: "ERR",
-        message: "All fields are required.",
-      });
-    }
-
     // Kiểm tra định dạng email
     const emailRegex = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
     if (!emailRegex.test(email)) {
